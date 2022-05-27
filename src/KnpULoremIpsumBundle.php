@@ -9,15 +9,16 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class KnpULoremIpsumBundle extends AbstractBundle
 {
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new WordProviderCompilerPass());
-    }
+//    public function build(ContainerBuilder $container)
+//    {
+//        $container->addCompilerPass(new WordProviderCompilerPass());
+//    }
 
     protected string $extensionAlias = 'knpu_lorem_ipsum';
 
@@ -27,8 +28,38 @@ class KnpULoremIpsumBundle extends AbstractBundle
      */
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-        $loader = new XmlFileLoader($builder, new FileLocator(__DIR__.'/Resources/config'));
-        $loader->load('services.xml');
+//        $loader = new XmlFileLoader($builder, new FileLocator(__DIR__.'/Resources/config'));
+//        $loader->load('services.xml');
+
+/*        <service id="knpu_lorem_ipsum.knpu_ipsum" class="KnpU\LoremIpsumBundle\KnpUIpsum" public="true">
+            <argument type="collection" />
+        </service>
+
+        <service id="knpu_lorem_ipsum.ipsum_api_controller" class="KnpU\LoremIpsumBundle\Controller\IpsumApiController" public="true">
+            <argument type="service" id="knpu_lorem_ipsum.knpu_ipsum" />
+            <argument type="service" id="event_dispatcher" on-invalid="null" />
+        </service>
+
+        <service id="knpu_lorem_ipsum.knpu_word_provider" class="KnpU\LoremIpsumBundle\KnpUWordProvider">
+            <tag name="knpu_ipsum_word_provider" />
+        </service>
+
+        <service id="knpu_lorem_ipsum.word_provider" alias="knpu_lorem_ipsum.knpu_word_provider" public="false" />
+        <service id="KnpU\LoremIpsumBundle\KnpUIpsum" alias="knpu_lorem_ipsum.knpu_ipsum" public="false" />*/
+
+
+        $builder->autowire('knpu_lorem_ipsum.knpu_ipsum', KnpUIpsum::class)
+            ->addArgument('collection');
+
+        $serviceIdentifier='knpu_lorem_ipsum.knpu_ipsum';
+        $builder->register(KnpUIpsum::class, $serviceIdentifier);
+        $container->services()->alias(KnpUIpsum::class, $serviceIdentifier );
+
+        $wordProviderId = 'knpu_lorem_ipsum.knpu_word_provider';
+        $wordProviderTag = "knpu_ipsum_word_provider";
+        $builder->register($wordProviderId, KnpUWordProvider::class)->addTag($wordProviderTag);
+
+
 
         $definition = $builder->getDefinition('knpu_lorem_ipsum.knpu_ipsum');
         $definition->setArgument(1, $config['unicorns_are_real']);
@@ -36,6 +67,15 @@ class KnpULoremIpsumBundle extends AbstractBundle
 
         $builder->registerForAutoconfiguration(WordProviderInterface::class)
             ->addTag('knpu_ipsum_word_provider');
+
+
+        $references = [];
+        foreach ($builder->findTaggedServiceIds('knpu_ipsum_word_provider') as $id => $tags) {
+            $references[] = new Reference($id);
+        }
+
+        $definition->setArgument(0, $references);
+
 
     }
 
