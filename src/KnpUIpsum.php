@@ -76,7 +76,7 @@ class KnpUIpsum
      * @param  boolean $asArray whether an array or a string should be returned
      * @return mixed   string or array of generated lorem ipsum words
      */
-    public function getWords(int $count = 1, bool $asArray = false)
+    public function getWords(int $count = 1, bool $asArray = false): mixed
     {
         $count = $count < 1 ? 1 : $count;
 
