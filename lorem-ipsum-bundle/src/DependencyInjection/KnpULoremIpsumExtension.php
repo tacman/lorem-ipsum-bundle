@@ -27,7 +27,7 @@ class KnpULoremIpsumExtension extends Extension
             ->addTag('knpu_ipsum_word_provider');
     }
 
-    public function getAlias(): string
+    public function getAlias()
     {
         return 'knpu_lorem_ipsum';
     }

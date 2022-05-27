@@ -29,7 +29,7 @@ class IpsumApiController extends AbstractController
 
         $event = new FilterApiResponseEvent($data);
         if ($this->eventDispatcher) {
-            $this->eventDispatcher->dispatch($event, KnpULoremIpsumEvents::FILTER_API);
+            $this->eventDispatcher->dispatch(KnpULoremIpsumEvents::FILTER_API, $event);
         }
 
         return $this->json($event->getData());

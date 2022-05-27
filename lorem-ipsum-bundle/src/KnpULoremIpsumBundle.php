@@ -5,7 +5,6 @@ namespace KnpU\LoremIpsumBundle;
 use KnpU\LoremIpsumBundle\DependencyInjection\Compiler\WordProviderCompilerPass;
 use KnpU\LoremIpsumBundle\DependencyInjection\KnpULoremIpsumExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class KnpULoremIpsumBundle extends Bundle
@@ -15,7 +14,7 @@ class KnpULoremIpsumBundle extends Bundle
         $container->addCompilerPass(new WordProviderCompilerPass());
     }
 
-    public function getContainerExtension(): ExtensionInterface
+    public function getContainerExtension()
     {
         if (null === $this->extension) {
             $this->extension = new KnpULoremIpsumExtension();
