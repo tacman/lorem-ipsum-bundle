@@ -33,7 +33,7 @@ class KnpULoremIpsumControllerKernel extends Kernel
         parent::__construct('test', true);
     }
 
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [
             new KnpULoremIpsumBundle(),
@@ -53,7 +53,7 @@ class KnpULoremIpsumControllerKernel extends Kernel
         ]);
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return __DIR__.'/../cache/'.spl_object_hash($this);
     }
